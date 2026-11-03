@@ -1,0 +1,92 @@
+# Render Blueprint for Flaria (free plan). In Render: New > Blueprint > choose this repository.
+# Values marked "sync: false" are asked for when you create the Blueprint. Full walkthrough: DEPLOY-RENDER.md.
+services:
+  # Public landing page: a free static site that never sleeps. This is the page Google indexes.
+  # Address: https://flaria.onrender.com if that name is free, otherwise Render adds a suffix.
+  - type: web
+    name: flaria
+    runtime: static
+    rootDir: flaria-web
+    buildCommand: npm ci --no-audit --no-fund && (npm run assets || true) && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: NODE_VERSION
+        value: "20.18.0"
+      - key: VITE_DEMO_MODE
+        value: "true"
+      # This site's own address (canonical URL, sitemap); change it if Render gives a different one.
+      - key: VITE_SITE_URL
+        value: https://flaria.onrender.com
+      # Address of the app service below; change it if Render gives the app a different address.
+      - key: VITE_APP_URL
+        value: https://flaria-app.onrender.com
+      # Optional: comma-separated official profiles, e.g. https://github.com/you,https://www.linkedin.com/in/you
+      - key: FLARIA_SAME_AS
+        sync: false
+      # Optional: the content value of Google Search Console's HTML-tag verification.
+      - key: FLARIA_GOOGLE_SITE_VERIFICATION
+        sync: false
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+    routes:
+      # Render only applies rules when no file exists at the path, so the landing page,
+      # sitemap and images are served as usual and everything else (sign-in, dashboard,
+      # password-reset links) goes to the app. Keep this host in step with VITE_APP_URL.
+      - type: redirect
+        source: /*
+        destination: https://flaria-app.onrender.com/*
+
+  # The app: sign-in, live sessions, results, admin console. Free web services sleep after
+  # 15 minutes without traffic and take about a minute to wake on the next visit.
+  - type: web
+    name: flaria-app
+    runtime: docker
+    plan: free
+    region: frankfurt        # closest free region to West Africa and Europe; create the Neon database in Frankfurt too
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health/live
+    envVars:
+      - key: FLARIA_ENV
+        value: production
+      - key: FLARIA_JWT_SECRET
+        generateValue: true
+      - key: FLARIA_DATABASE_URL     # Neon connection string (Neon dashboard > Connect)
+        sync: false
+      - key: FLARIA_DB_POOL_MIN
+        value: "1"
+      - key: FLARIA_DB_POOL_MAX
+        value: "5"
+      - key: FLARIA_INFERENCE_THREADS
+        value: "2"
+      # Free instances get a tenth of a CPU: 10 updates a second keeps live sessions smooth.
+      - key: FLARIA_TICK_HZ
+        value: "10"
+      - key: FLARIA_DEMO_MODE
+        value: "true"
+      - key: VITE_DEMO_MODE
+        value: "true"
+      # Address of the landing page above (used for share links); change it if Render gives a different one.
+      - key: VITE_SITE_URL
+        value: https://flaria.onrender.com
+      - key: FLARIA_MAIL_BACKEND
+        value: brevo
+      - key: FLARIA_BREVO_API_KEY    # Brevo > SMTP & API > API keys
+        sync: false
+      - key: FLARIA_MAIL_FROM        # e.g. Flaria <you@gmail.com>, using the sender you verified in Brevo
+        sync: false
+      - key: FLARIA_BOOTSTRAP_ADMIN_EMAIL   # receives a link to set the admin password on first start
+        sync: false
+      - key: FLARIA_BOOTSTRAP_ADMIN_NAME
+        sync: false

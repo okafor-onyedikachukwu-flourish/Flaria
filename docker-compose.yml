@@ -1,0 +1,43 @@
+# Production-shaped stack: PostgreSQL, the API (internal only) and nginx serving the app.
+#   cp .env.example .env && cp flaria-core/.env.example flaria-core/.env   # then fill both in
+#   place flaria_core.onnx + flaria_core.meta.json in flaria-core/models/
+#   docker compose up --build
+# Terminate TLS in front of the web service (load balancer or reverse proxy).
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: flaria
+      POSTGRES_DB: flaria
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U flaria -d flaria"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  core:
+    build: ./flaria-core
+    env_file: ./flaria-core/.env
+    environment:
+      FLARIA_DATABASE_URL: postgresql://flaria:${POSTGRES_PASSWORD}@db:5432/flaria
+    volumes:
+      - ./flaria-core/models:/app/models:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build: ./flaria-web
+    ports:
+      - "8080:8080"
+    depends_on:
+      - core
+    restart: unless-stopped
+
+volumes:
+  pgdata:

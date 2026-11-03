@@ -1,0 +1,13 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+node_modules/
+flaria-web/dist/
+flaria-web/public/mediapipe/
+flaria-web/public/assets/*
+!flaria-web/public/assets/.gitkeep
+flaria-core/models/*
+!flaria-core/models/.gitkeep

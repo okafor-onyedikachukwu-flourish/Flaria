@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { font-feature-settings: 'kern', 'liga'; text-rendering: optimizeLegibility; }
+  body { min-height: 100dvh; }
+  h1, h2, h3 { font-family: theme('fontFamily.display'); letter-spacing: -0.01em; text-wrap: balance; }
+  p { text-wrap: pretty; }
+  :focus-visible { outline: 2px solid theme('colors.scrub.DEFAULT'); outline-offset: 2px; border-radius: 4px; }
+  .hud :focus-visible { outline-color: theme('colors.trace'); }
+  ::selection { background: theme('colors.scrub.wash'); }
+}
+
+@layer components {
+  /* Clinical chart paper: 4 mm minor / 20 mm major grid, the recording medium of ECG and audiometry. */
+  .chart-paper {
+    background-color: theme('colors.paper.DEFAULT');
+    background-image:
+      linear-gradient(to right, rgb(29 107 115 / 0.10) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(29 107 115 / 0.10) 1px, transparent 1px),
+      linear-gradient(to right, rgb(29 107 115 / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(29 107 115 / 0.045) 1px, transparent 1px);
+    background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px;
+  }
+  .num { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-step-0 font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-primary { @apply btn bg-scrub text-white hover:bg-scrub-deep; }
+  .btn-quiet { @apply btn border border-rule bg-paper-card text-ink hover:border-scrub hover:text-scrub-deep; }
+  .btn-danger { @apply btn bg-elevated text-white hover:brightness-95; }
+  .field {
+    @apply w-full rounded-md border border-rule bg-white px-3 py-2.5 text-step-0 text-ink placeholder:text-ink-faint focus:border-scrub focus:outline-none focus:ring-2 focus:ring-scrub/25;
+  }
+  .panel { @apply rounded-instrument border border-rule bg-paper-card; }
+  .hud-panel { @apply rounded-instrument border border-hud-line bg-hud text-hud-text; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

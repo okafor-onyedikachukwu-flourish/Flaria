@@ -1,0 +1,10 @@
+**/node_modules
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.env
+flaria-web/dist
+flaria-web/public/mediapipe
+flaria-core/tests
+tools
+.git

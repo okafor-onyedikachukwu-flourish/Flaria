@@ -1,0 +1,5 @@
+# Offline workstation HUD (scripts/live_hud.py)
+-r requirements.txt
+opencv-python==4.10.0.84
+mediapipe==0.10.14
+sounddevice==0.5.1

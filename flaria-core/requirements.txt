@@ -1,0 +1,15 @@
+# flaria-core API server (Python 3.11)
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+pydantic==2.10.2
+pydantic-settings==2.6.1
+email-validator==2.2.0
+asyncpg==0.30.0
+PyJWT==2.10.1
+passlib[argon2]==1.7.4
+argon2-cffi==23.1.0
+numpy==1.26.4
+scipy==1.13.1
+librosa==0.10.2.post1
+onnxruntime==1.20.1
+# GPU hosts: replace the line above with onnxruntime-gpu==1.20.1 (CUDA 12.x + cuDNN 9)
