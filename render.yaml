@@ -16,7 +16,7 @@ services:
         value: "true"
       # This site's own address (canonical URL, sitemap); change it if Render gives a different one.
       - key: VITE_SITE_URL
-        value: https://flaria.onrender.com
+        value: https://flaria-smpw.onrender.com
       # Address of the app service below; change it if Render gives the app a different address.
       - key: VITE_APP_URL
         value: https://flaria-app.onrender.com
@@ -95,7 +95,7 @@ services:
         value: "true"
       # Address of the landing page above (used for share links); change it if Render gives a different one.
       - key: VITE_SITE_URL
-        value: https://flaria.onrender.com
+        value: https://flaria-smpw.onrender.com
       - key: FLARIA_MAIL_BACKEND
         value: brevo
       - key: FLARIA_BREVO_API_KEY    # Brevo > SMTP & API > API keys
