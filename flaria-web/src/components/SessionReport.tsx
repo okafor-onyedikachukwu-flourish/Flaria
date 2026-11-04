@@ -78,7 +78,7 @@ export function SessionReport({ report, onChange, canWriteNotes, patientName }: 
         </div>
       </div>
 
-      <div className="grid gap-8 p-5 sm:p-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-8 p-5 sm:p-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
         <div>
           <h3 className="font-sans text-step-1 font-semibold">{report.demo ? 'What the demo measured' : 'What changed'}</h3>
           {report.findings.length === 0 ? (

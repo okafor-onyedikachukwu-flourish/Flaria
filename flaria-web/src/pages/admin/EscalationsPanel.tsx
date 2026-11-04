@@ -37,7 +37,7 @@ export function EscalationsPanel() {
       <div className="panel bg-white">
         <LoadState loading={!rows && !error} error={error} empty={rows?.length === 0} emptyText={openOnly ? 'Nothing is awaiting follow-up.' : 'No urgent results yet.'}>
           {rows && (
-            <div className="overflow-x-auto">
+            <div className="relative overflow-x-auto">
               <table className="w-full min-w-[58rem] text-left text-step--1">
                 <thead className="border-b border-rule bg-paper-card text-ink-soft">
                   <tr>

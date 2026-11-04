@@ -16,7 +16,7 @@ export function PrivacyBadge() {
         <ShieldCheck size={16} aria-hidden />
         Raw media never stored
       </summary>
-      <div className="absolute right-0 z-30 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-lg border border-rule bg-white p-4 text-step--1 shadow-lg">
+      <div className="absolute left-0 z-30 sm:left-auto sm:right-0 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-lg border border-rule bg-white p-4 text-step--1 shadow-lg">
         <p className="font-medium text-ink">What stays private</p>
         <ul className="mt-2 list-disc space-y-1.5 pl-4 text-ink-soft">
           <li>Video frames never leave this device. The face mesh runs in your browser and only landmark positions are sent.</li>

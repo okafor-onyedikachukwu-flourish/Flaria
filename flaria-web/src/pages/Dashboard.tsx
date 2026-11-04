@@ -7,6 +7,8 @@ import { AnomalyChart, BiomarkerSparklines } from '@/components/BiomarkerCharts'
 import { BrandMark } from '@/components/BrandMark';
 import { DemoBanner } from '@/components/DemoBanner';
 import { CareNotes } from '@/components/CareNotes';
+import { ResearchConsent } from '@/components/ResearchConsent';
+import { ResearchLabelPanel } from '@/components/ResearchLabelPanel';
 import { LiveCameraHUD } from '@/components/LiveCameraHUD';
 import { PrivacyBadge } from '@/components/PrivacyBadge';
 import { ReferencePanel } from '@/components/ReferencePanel';
@@ -20,6 +22,8 @@ import { api, errorMessage } from '@/services/api';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useTelemetryStore } from '@/store/useTelemetryStore';
 import type { PatientSummary, SessionReport as Report } from '@/types';
+import { useResearchMode } from '@/lib/demo';
+import { research, type MyParticipation } from '@/lib/research';
 import { useDocumentTitle } from '@/lib/useDocumentTitle';
 
 const READING_PASSAGE =
@@ -55,6 +59,14 @@ export default function Dashboard() {
   const audioSeq = useRef(0);
   const resultRef = useRef<HTMLDivElement>(null);
   const selectedPatient = patients.find((p) => p.id === patientId);
+  const researchMode = useResearchMode();
+  const [participation, setParticipation] = useState<MyParticipation | null>(null);
+  const loadParticipation = useCallback(() => {
+    if (researchMode && user.role === 'PATIENT') void research.me().then(setParticipation).catch(() => setParticipation(null));
+  }, [researchMode, user.role]);
+  useEffect(loadParticipation, [loadParticipation]);
+  // In research mode a participant must agree to the current study information first.
+  const needsConsent = researchMode && user.role === 'PATIENT' && participation !== null && !participation.consented;
   const canWriteNotes = canChoosePatient && patientId !== null;
 
   const loadLatest = useCallback(async () => {
@@ -196,7 +208,8 @@ export default function Dashboard() {
                 <Square size={16} aria-hidden /> Stop session
               </button>
             ) : (
-              <button type="button" onClick={start} className="btn-primary">
+              <button type="button" onClick={start} className="btn-primary" disabled={needsConsent}
+                title={needsConsent ? 'Join the study first' : undefined}>
                 <Play size={16} aria-hidden /> Start session
               </button>
             )}
@@ -216,6 +229,10 @@ export default function Dashboard() {
           </p>
         )}
 
+        {needsConsent && !active && (
+          <ResearchConsent reconsent={participation?.needs_reconsent ?? false} onConsented={loadParticipation} />
+        )}
+
         {!active && reportState === 'waiting' && (
           <p className="panel flex items-center gap-2 p-4 text-step--1 text-ink-soft" role="status">
             <LoaderCircle size={16} className="animate-spin" aria-hidden /> Preparing the result of this reading…
@@ -232,9 +249,12 @@ export default function Dashboard() {
             <CareNotes patientId={patientId!} canWrite patientName={selectedPatient?.full_name} />
           </section>
         )}
+        {researchMode && canChoosePatient && patientId !== null && !active && (
+          <ResearchLabelPanel key={patientId} patientId={patientId} patientName={selectedPatient?.full_name} />
+        )}
 
-        <div className="grid gap-6 lg:grid-cols-12">
-          <div className="space-y-6 lg:col-span-7">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          <div className="min-w-0 space-y-6 lg:col-span-7">
             <LiveCameraHUD active={active} onFrame={onFrame} />
             {active && (
               <section className="panel p-5" aria-labelledby="passage-heading">
@@ -248,7 +268,7 @@ export default function Dashboard() {
             )}
             <AnomalyChart />
           </div>
-          <div className="lg:col-span-5">
+          <div className="min-w-0 lg:col-span-5">
             <StatusConsole streaming={active && !busy} />
           </div>
         </div>

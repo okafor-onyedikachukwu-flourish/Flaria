@@ -263,6 +263,44 @@ CREATE TABLE IF NOT EXISTS care_notes (
 
 CREATE INDEX IF NOT EXISTS care_notes_patient_idx ON care_notes (patient_id, created_at DESC);
 
+-- ----------------------------------------------------------------------------- research mode
+-- Pseudonymous study codes: exports use these, never names, e-mails or user ids.
+CREATE SEQUENCE IF NOT EXISTS research_study_code_seq;
+
+CREATE TABLE IF NOT EXISTS research_participants (
+    user_id     uuid PRIMARY KEY REFERENCES users (id) ON DELETE CASCADE,
+    study_code  text NOT NULL UNIQUE CHECK (study_code ~ '^FLR-[0-9]{4,}$'),
+    created_at  timestamptz NOT NULL DEFAULT now()
+);
+
+-- Informed consent history. At most one active (not withdrawn) consent per person.
+CREATE TABLE IF NOT EXISTS research_consents (
+    id               bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id          uuid NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    consent_version  text NOT NULL CHECK (char_length(consent_version) BETWEEN 1 AND 64),
+    consented_at     timestamptz NOT NULL DEFAULT now(),
+    withdrawn_at     timestamptz,
+    ip               inet,
+    CHECK (withdrawn_at IS NULL OR withdrawn_at >= consented_at)
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS research_consents_one_active_idx
+    ON research_consents (user_id) WHERE withdrawn_at IS NULL;
+
+-- Clinician-confirmed group for each participant (append-only; latest row wins).
+CREATE TABLE IF NOT EXISTS research_labels (
+    id           bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id      uuid NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    label        text NOT NULL CHECK (label IN ('healthy_control', 'stroke', 'als', 'parkinsons',
+                                                'bells_palsy', 'respiratory', 'other')),
+    severity     text CHECK (severity IS NULL OR severity IN ('mild', 'moderate', 'severe')),
+    detail       text CHECK (detail IS NULL OR char_length(detail) <= 500),  -- internal only, never exported
+    recorded_by  uuid REFERENCES users (id) ON DELETE SET NULL,
+    recorded_at  timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS research_labels_user_idx ON research_labels (user_id, recorded_at DESC);
+
 -- ----------------------------------------------------------------------------- audit trail
 CREATE TABLE IF NOT EXISTS audit_events (
     id         bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

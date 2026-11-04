@@ -73,6 +73,7 @@ class CloseCode:
     FORBIDDEN = 4403
     IDLE = 4408
     CONFLICT = 4409
+    CONSENT_REQUIRED = 4412  # research mode: no current informed consent
 
 
 # ============================================================================ risk state machine

@@ -5,13 +5,29 @@ import { env } from '@/config/env';
 /** Set at build time for the static landing page, which has no API to ask. */
 export const DEMO_BUILD = import.meta.env.VITE_DEMO_MODE === 'true';
 
-let configPromise: Promise<{ demo_mode: boolean }> | null = null;
+interface PublicConfig { demo_mode: boolean; research_mode?: boolean }
+let configPromise: Promise<PublicConfig> | null = null;
 
-function loadConfig(): Promise<{ demo_mode: boolean }> {
+export function loadConfig(): Promise<PublicConfig> {
   configPromise ??= fetch(`${env.apiBase}/config`, { credentials: 'same-origin' })
     .then((r) => (r.ok ? r.json() : { demo_mode: false }))
     .catch(() => ({ demo_mode: false }));
   return configPromise;
+}
+
+/** True when the server runs in research mode (consent, labels, export). */
+export function useResearchMode(): boolean {
+  const [research, setResearch] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    void loadConfig().then((c) => {
+      if (alive) setResearch(Boolean(c.research_mode));
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return research;
 }
 
 /** True when either the build or the server says this deployment is a demo. */

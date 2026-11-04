@@ -150,7 +150,76 @@ export function UsersPanel() {
 
         <LoadState loading={!page && !error} error={error} empty={page?.items.length === 0} emptyText="No accounts match these filters.">
           {page && (
-            <div className="overflow-x-auto">
+            <>
+            {/* Phones: one card per person, every action visible without sideways scrolling. */}
+            <ul className="divide-y divide-rule/70 text-step--1 sm:hidden">
+              {page.items.map((u) => {
+                const self = u.id === me?.id;
+                return (
+                  <li key={u.id} className="space-y-3 px-4 py-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="font-medium text-ink">{u.full_name}{self && <span className="ml-1.5 text-ink-faint">(you)</span>}</p>
+                        <p className="break-all text-ink-soft">{u.email}</p>
+                      </div>
+                      <StatusBadge user={u} />
+                    </div>
+                    <dl className="grid grid-cols-2 gap-x-4 gap-y-1">
+                      <div>
+                        <dt className="text-ink-faint">Last sign-in</dt>
+                        <dd className="text-ink">{relative(u.last_login_at)}</dd>
+                      </div>
+                      {u.role === 'PATIENT' && (
+                        <div>
+                          <dt className="text-ink-faint">Sessions</dt>
+                          <dd className="num text-ink">{u.session_count}</dd>
+                        </div>
+                      )}
+                    </dl>
+                    {u.failed_login_count > 0 && u.is_active && (
+                      <p className="text-ink-faint">{u.failed_login_count} failed sign-in{u.failed_login_count === 1 ? '' : 's'}</p>
+                    )}
+                    <label className="block">
+                      <span className="mb-1 block text-ink-faint">Role</span>
+                      <select
+                        aria-label={`Role for ${u.full_name}`}
+                        className="field py-2 text-step--1"
+                        value={u.role}
+                        disabled={self || busy === u.id}
+                        onChange={(e) => void changeRole(u, e.target.value as Role)}
+                      >
+                        <option value="PATIENT">Patient</option>
+                        <option value="CLINICIAN">Clinician</option>
+                        <option value="ADMIN">Admin</option>
+                      </select>
+                    </label>
+                    {!self && (
+                      <div className="flex flex-wrap gap-2">
+                        {u.locked && u.is_active && (
+                          <button type="button" className="btn-quiet px-3 py-2 text-step--1" disabled={busy === u.id}
+                            onClick={() => void act(u, () => adminApi.unlock(u.id), `${u.full_name} can sign in again.`)}>
+                            <KeyRound size={15} aria-hidden /> Unlock
+                          </button>
+                        )}
+                        {u.is_active && (
+                          <button type="button" className="btn-quiet px-3 py-2 text-step--1" disabled={busy === u.id} onClick={() => void sendReset(u)}>
+                            <Mail size={15} aria-hidden /> Send reset link
+                          </button>
+                        )}
+                        <button type="button" className="btn-quiet px-3 py-2 text-step--1" disabled={busy === u.id} onClick={() => void signOut(u)}>
+                          <LogOut size={15} aria-hidden /> Sign out everywhere
+                        </button>
+                        <button type="button" className="btn-quiet px-3 py-2 text-step--1" disabled={busy === u.id} onClick={() => void toggleActive(u)}>
+                          {u.is_active ? <ShieldOff size={15} aria-hidden /> : <ShieldCheck size={15} aria-hidden />}
+                          {u.is_active ? 'Disable' : 'Enable'}
+                        </button>
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+            <div className="relative hidden overflow-x-auto sm:block">
               <table className="w-full min-w-[50rem] text-left text-step--1">
                 <thead className="border-b border-rule bg-paper-card text-ink-soft">
                   <tr>
@@ -226,6 +295,7 @@ export function UsersPanel() {
                 </tbody>
               </table>
             </div>
+            </>
           )}
         </LoadState>
 

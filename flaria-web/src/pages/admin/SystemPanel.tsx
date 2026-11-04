@@ -35,7 +35,7 @@ export function SystemPanel() {
       <SectionHeader title="System" description="Runtime state of this API server, the analysis model and the database. Settings are read-only here; change them through the deployment environment." />
       <LoadState loading={!info && !error} error={error}>
         {info && (
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <Group title="Service" rows={[
               ['Environment', <Badge key="e" tone={info.environment === 'production' ? 'good' : 'warn'}>{info.environment}</Badge>],
               ['API version', info.version],

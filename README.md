@@ -50,6 +50,18 @@ flaria/
 5. **Status.** An EMA (τ = 0.5 s) feeds a hysteretic state machine: Watch after 1.5 s above threshold, Elevated after 3 s, release after 2 s below threshold minus 0.05. Missing modalities are fed as neutral z = 0 and reported as Signal lost, so absent data never raises the index.
 6. **Persistence.** 1 Hz aggregates go to a batched COPY writer with backoff and a bounded queue. Telemetry is range-partitioned by month with BRIN and B-tree indexes.
 
+## Research mode
+
+Turned on with `FLARIA_RESEARCH_MODE=true` (the Render Blueprint does this). For data to be usable in research, the deployment needs consent, labels and a clean export:
+
+- **Informed consent:** participants read a study information sheet and tick two statements before their first session. The server refuses live sessions without a current consent (WebSocket close code 4412), so the rule can't be bypassed. The consent version is a hash of the exact wording, so changing any study detail asks everyone to consent again.
+- **Withdrawal and deletion:** from Account settings. Withdrawal leaves the person out of every future export. Deletion erases their sessions, results, baselines and labels, and ends participation.
+- **Clinician labels:** a clinician on the participant's care team (or an admin) records the clinically confirmed group (healthy control, stroke, ALS, Parkinson's, Bell's palsy, respiratory, other) and severity. Free-text notes stay internal.
+- **De-identified export** (admin, Research section): `participants.csv`, `sessions.csv` and `samples.csv` (one row per second of session with all 20 measures) plus a README data dictionary. It contains study codes only (FLR-0001…), with no names, emails, account ids, IP addresses, notes or calendar dates; times are day and second offsets. Withdrawn participants are excluded, and the README states the ethics approval status.
+- **Ethics status:** until `FLARIA_STUDY_ETHICS_REFERENCE` is set, participants are told their data won't be used in research, and exports are stamped NOT YET APPROVED.
+
+Tests: `tests/test_research.py` (consent versioning, de-identification) and `scripts/smoke_research.py` (40 end-to-end checks covering the consent gate, roles, export contents, withdrawal and deletion).
+
 ## Results after each session
 
 When a session ends the server writes a result (`app/services/findings.py`, table `session_reports`):

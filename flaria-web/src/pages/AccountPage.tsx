@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { BrandMark } from '@/components/BrandMark';
 import { PasswordField } from '@/components/PasswordField';
+import { ResearchParticipation } from '@/components/ResearchParticipation';
+import { useResearchMode } from '@/lib/demo';
 import { PASSWORD_HINT, passwordProblem } from '@/lib/password';
 import { api, errorMessage } from '@/services/api';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -31,6 +33,7 @@ export function AccountPage() {
   const logout = useAuthStore((s) => s.logout);
   const navigate = useNavigate();
   const home = user.role === 'ADMIN' ? '/admin' : '/app';
+  const researchMode = useResearchMode();
 
   const [account, setAccount] = useState<Account | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -101,7 +104,7 @@ export function AccountPage() {
         <section className="panel bg-white" aria-labelledby="profile-heading">
           <h2 id="profile-heading" className="border-b border-rule px-5 py-3 font-sans text-step-0 font-semibold">Profile</h2>
           {loadError && <p role="alert" className="px-5 py-4 text-step--1 text-elevated">{loadError}</p>}
-          <dl className="grid gap-x-8 gap-y-4 px-5 py-5 text-step--1 sm:grid-cols-2">
+          <dl className="grid grid-cols-1 gap-x-8 gap-y-4 px-5 py-5 text-step--1 sm:grid-cols-2">
             {[
               ['Name', user.full_name],
               ['Email', user.email],
@@ -123,7 +126,7 @@ export function AccountPage() {
             <h2 id="password-heading" className="font-sans text-step-0 font-semibold">Change password</h2>
             <p className="text-step--1 text-ink-soft">Changing it signs you out on every other device. You stay signed in here.</p>
           </div>
-          <form onSubmit={submit} className="grid gap-5 px-5 py-5 md:grid-cols-2" noValidate>
+          <form onSubmit={submit} className="grid grid-cols-1 gap-5 px-5 py-5 md:grid-cols-2" noValidate>
             <div className="md:col-span-2 md:max-w-sm">
               <PasswordField label="Current password" autoComplete="current-password" value={current} onChange={setCurrent}
                 error={touched && !current ? 'Enter your current password.' : null} />
@@ -151,6 +154,8 @@ export function AccountPage() {
             </div>
           </form>
         </section>
+
+        {researchMode && user.role === 'PATIENT' && <ResearchParticipation />}
 
         <section className="panel bg-white" aria-labelledby="devices-heading">
           <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4">

@@ -63,7 +63,27 @@ export function SessionHistory({ patientId, refreshKey, onView }: Props) {
         <p className="text-step--1 text-ink-soft">No sessions yet. Each session adds to the personal baseline that readings are compared with.</p>
       )}
       {sessions && sessions.length > 0 && (
-        <div className="overflow-x-auto">
+        <>
+        {/* Phones: one card per session. */}
+        <ul className="divide-y divide-rule/70 text-step--1 sm:hidden">
+          {sessions.map((s) => (
+            <li key={s.id} className="flex items-start justify-between gap-3 py-3">
+              <div className="min-w-0">
+                <p className="font-medium text-ink">{dateFmt.format(new Date(s.started_at))}</p>
+                <p className="text-ink-soft">
+                  {duration(s)}, {STATUS_TEXT[s.status].toLowerCase()}
+                  {s.mean_anomaly !== null ? `, mean index ${s.mean_anomaly.toFixed(2)}` : ''}
+                </p>
+              </div>
+              {onView && s.status !== 'ACTIVE' && (
+                <button type="button" onClick={() => onView(s.id)} className="shrink-0 text-step--1 font-medium text-scrub-deep underline underline-offset-2">
+                  View result
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+        <div className="relative hidden overflow-x-auto sm:block">
           <table className="w-full min-w-[40rem] text-left text-step--1">
             <thead className="border-b border-rule text-ink-soft">
               <tr>
@@ -95,6 +115,7 @@ export function SessionHistory({ patientId, refreshKey, onView }: Props) {
             </tbody>
           </table>
         </div>
+        </>
       )}
     </section>
   );

@@ -33,6 +33,7 @@ const TERMINAL: Record<number, string> = {
   1009: 'A frame exceeded the server size limit. Reload the page and try again.',
   4403: 'You don’t have access to stream for this patient.',
   4409: 'A session is already running for this patient in another tab or device. Stop it there, then start again.',
+  4412: 'This person hasn’t joined the study yet. They need to read and accept the study information before a session can start.',
 };
 
 interface Options {

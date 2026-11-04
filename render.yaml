@@ -75,6 +75,22 @@ services:
         value: "10"
       - key: FLARIA_DEMO_MODE
         value: "true"
+      # Research mode: informed consent before any session, clinician labels, de-identified export.
+      - key: FLARIA_RESEARCH_MODE
+        value: "true"
+      - key: FLARIA_STUDY_TITLE
+        value: Voice and facial movement as early signs of neurological change
+      # Set these four in Render (Environment tab); they're shown to participants on the consent page.
+      - key: FLARIA_STUDY_INVESTIGATOR
+        sync: false
+      - key: FLARIA_STUDY_INSTITUTION
+        sync: false
+      - key: FLARIA_STUDY_CONTACT_EMAIL
+        sync: false
+      # The ethics committee's approval number. Leave empty until approved: the app then tells
+      # participants their data won't be used in research, and stamps every export accordingly.
+      - key: FLARIA_STUDY_ETHICS_REFERENCE
+        sync: false
       - key: VITE_DEMO_MODE
         value: "true"
       # Address of the landing page above (used for share links); change it if Render gives a different one.

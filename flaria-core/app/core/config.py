@@ -66,6 +66,19 @@ class Settings(BaseSettings):
     # --- Deployment ---------------------------------------------------------
     # Demo mode: results are labelled as demonstrations (no trained, validated model yet).
     demo_mode: bool = False
+
+    # --- Research mode ------------------------------------------------------
+    # Turns the deployment into a study: participants must give informed consent
+    # before any session, clinicians record each participant's confirmed group,
+    # and admins can export de-identified measurements.
+    research_mode: bool = False
+    study_title: str = "Flaria voice and facial movement study"
+    study_institution: str = ""
+    study_investigator: str = ""
+    study_contact_email: str = ""
+    # Approval number from the ethics committee. Empty means not yet approved:
+    # the app says so on the consent page and in every export.
+    study_ethics_reference: str = ""
     # Serve the built web app (flaria-web/dist) from this process (single-container deploys).
     web_dist_path: Path | None = None
     # First-start admin: created (or promoted) when no admin exists, then e-mailed a link to set a password.

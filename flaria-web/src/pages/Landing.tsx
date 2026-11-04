@@ -109,7 +109,7 @@ export function Landing() {
 
       <main id="main">
         <section className="chart-paper border-y border-rule">
-          <div className="mx-auto grid max-w-6xl items-center gap-6 px-5 py-12 lg:grid-cols-12 lg:gap-10 lg:py-20">
+          <div className="mx-auto grid grid-cols-1 max-w-6xl items-center gap-6 px-5 py-12 lg:grid-cols-12 lg:gap-10 lg:py-20">
             <div className="lg:col-span-5">
               <h1 className="font-display text-step-4 font-semibold sm:text-step-5">
                 Flaria spots early change in voice and facial movement
@@ -141,8 +141,8 @@ export function Landing() {
             Population averages miss early change because healthy people differ more from each other than from their own past selves.
             Flaria learns each person’s normal first.
           </p>
-          <div className="mt-12 grid gap-14 lg:grid-cols-2">
-            <article className="grid gap-6 sm:grid-cols-[1fr_11rem]">
+          <div className="mt-12 grid grid-cols-1 gap-14 lg:grid-cols-2">
+            <article className="grid gap-6 sm:grid-cols-[minmax(0,1fr)_11rem]">
               <div>
                 <h3 className="text-step-2 font-semibold">Voice</h3>
                 <dl className="mt-4 space-y-4">
@@ -156,7 +156,7 @@ export function Landing() {
               </div>
               <SafeImage asset={ASSETS.laryngealMuscles} showCaption={false} className="self-start rounded-md border border-rule bg-white p-2" />
             </article>
-            <article className="grid gap-6 sm:grid-cols-[1fr_11rem]">
+            <article className="grid gap-6 sm:grid-cols-[minmax(0,1fr)_11rem]">
               <div>
                 <h3 className="text-step-2 font-semibold">Face</h3>
                 <dl className="mt-4 space-y-4">
@@ -176,7 +176,7 @@ export function Landing() {
         <section className="border-y border-rule bg-paper-deep" aria-labelledby="how-heading">
           <div className="mx-auto max-w-6xl px-5 py-16 lg:py-24">
             <h2 id="how-heading" className="text-step-3 font-semibold">How a reading works</h2>
-            <ol className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <ol className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
               {STEPS.map(([title, body], i) => (
                 <li key={title} className="relative border-t-2 border-scrub pt-4">
                   <span className="num font-display text-step-3 font-semibold text-scrub" aria-hidden>{i + 1}</span>
@@ -189,7 +189,7 @@ export function Landing() {
         </section>
 
         <section id="privacy" className="mx-auto max-w-6xl px-5 py-16 lg:py-24" aria-labelledby="privacy-heading">
-          <div className="grid items-start gap-12 lg:grid-cols-2">
+          <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2">
             <div>
               <h2 id="privacy-heading" className="text-step-3 font-semibold">Nothing to leak, because nothing raw is kept</h2>
               <p className="mt-4 max-w-prose text-ink-soft">
@@ -208,7 +208,7 @@ export function Landing() {
             </div>
           </div>
 
-          <div className="mt-20 grid items-center gap-10 lg:grid-cols-12">
+          <div className="mt-20 grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
             <SafeImage asset={ASSETS.clinicians} className="lg:col-span-7" imgClassName="aspect-[3/2] rounded-instrument object-cover" />
             <div className="lg:col-span-5">
               <h2 className="text-step-3 font-semibold">Made for follow-up between visits</h2>

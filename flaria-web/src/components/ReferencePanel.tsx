@@ -39,7 +39,7 @@ export function ReferencePanel() {
           <span className="text-step--1 font-sans font-normal text-ink-soft group-open:hidden">Show anatomy and measure definitions</span>
         </span>
       </summary>
-      <div className="mt-5 grid gap-8 md:grid-cols-3">
+      <div className="mt-5 grid grid-cols-1 gap-8 md:grid-cols-3">
         <div className="space-y-3">
           <h3 className="font-sans text-step-0 font-semibold">Voice source</h3>
           <SafeImage asset={ASSETS.larynx} className="rounded-md bg-white p-3" />

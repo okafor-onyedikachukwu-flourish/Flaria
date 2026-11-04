@@ -13,12 +13,13 @@ const CATEGORIES = [
   ['session', 'Sessions'],
   ['report', 'Results'],
   ['care_note', 'Care notes'],
+  ['research', 'Research'],
   ['admin', 'Admin actions'],
   ['cli', 'Command line'],
 ] as const;
 
 function tone(action: string): 'bad' | 'warn' | 'info' | 'neutral' {
-  if (action === 'auth.refresh_reuse' || action === 'admin.disable_user') return 'bad';
+  if (action === 'auth.refresh_reuse' || action === 'admin.disable_user' || action === 'research.data_deleted') return 'bad';
   if (['auth.login_failed', 'auth.password_change_failed', 'auth.password_reset_throttled', 'report.red_flags'].includes(action)) return 'warn';
   if (action.startsWith('admin.') || action.startsWith('cli.')) return 'info';
   return 'neutral';
@@ -92,7 +93,7 @@ export function AuditPanel() {
         </div>
         <LoadState loading={!items && !error} error={error} empty={items?.length === 0} emptyText="No events match these filters.">
           {items && (
-            <div className="overflow-x-auto">
+            <div className="relative overflow-x-auto">
               <table className="w-full min-w-[56rem] text-left text-step--1">
                 <thead className="border-b border-rule bg-paper-card text-ink-soft">
                   <tr>

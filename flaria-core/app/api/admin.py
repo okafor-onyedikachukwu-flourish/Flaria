@@ -326,7 +326,7 @@ async def escalations(
 
 @router.get("/audit", response_model=AuditPage)
 async def audit(
-    category: Literal["auth", "session", "admin", "report", "care_note", "cli"] | None = Query(None),
+    category: Literal["auth", "session", "admin", "report", "care_note", "research", "cli"] | None = Query(None),
     search: str | None = Query(None, max_length=120),
     before: int | None = Query(None, ge=1),
     limit: int = Query(50, ge=1, le=200),

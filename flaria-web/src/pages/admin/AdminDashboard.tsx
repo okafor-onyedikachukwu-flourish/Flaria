@@ -3,7 +3,7 @@
  * Each section is addressable by URL hash (#users, #audit, ...) so links and the
  * browser back button work. Visible only to ADMIN accounts (route guard + API).
  */
-import { Activity, ClipboardList, Gauge, KeyRound, LogOut, MonitorPlay, ServerCog, ShieldAlert, Users, UsersRound } from 'lucide-react';
+import { Activity, ClipboardList, FlaskConical, Gauge, KeyRound, LogOut, MonitorPlay, ServerCog, ShieldAlert, Users, UsersRound } from 'lucide-react';
 import { type ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -16,6 +16,7 @@ import { AuditPanel } from './AuditPanel';
 import { CareTeamPanel } from './CareTeamPanel';
 import { EscalationsPanel } from './EscalationsPanel';
 import { OverviewPanel } from './OverviewPanel';
+import { ResearchPanel } from './ResearchPanel';
 import { SystemPanel } from './SystemPanel';
 import { AdminUiProvider } from './ui';
 import { UsersPanel } from './UsersPanel';
@@ -25,6 +26,7 @@ const SECTIONS: { id: string; label: string; icon: ReactNode }[] = [
   { id: 'users', label: 'Users', icon: <Users size={18} aria-hidden /> },
   { id: 'care-teams', label: 'Care teams', icon: <UsersRound size={18} aria-hidden /> },
   { id: 'escalations', label: 'Escalations', icon: <ShieldAlert size={18} aria-hidden /> },
+  { id: 'research', label: 'Research', icon: <FlaskConical size={18} aria-hidden /> },
   { id: 'audit', label: 'Audit log', icon: <ClipboardList size={18} aria-hidden /> },
   { id: 'system', label: 'System', icon: <ServerCog size={18} aria-hidden /> },
 ];
@@ -64,7 +66,7 @@ export default function AdminDashboard() {
               <p className="mt-1 pl-[3.1rem] text-step--1 text-hud-dim">Admin console</p>
             </div>
           </div>
-          <nav aria-label="Admin sections" className="flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-1 lg:flex-col lg:overflow-visible lg:pb-0">
+          <nav aria-label="Admin sections" className="relative flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-1 lg:flex-col lg:overflow-visible lg:pb-0">
             {SECTIONS.map((s) => {
               const active = s.id === section;
               return (
@@ -130,6 +132,7 @@ export default function AdminDashboard() {
             {section === 'users' && <UsersPanel />}
             {section === 'care-teams' && <CareTeamPanel />}
             {section === 'escalations' && <EscalationsPanel />}
+            {section === 'research' && <ResearchPanel />}
             {section === 'audit' && <AuditPanel />}
             {section === 'system' && <SystemPanel />}
           </main>

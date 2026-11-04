@@ -26,6 +26,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from app.api import admin as admin_api
 from app.api import auth as auth_api
+from app.api import research as research_api
 from app.bootstrap import bootstrap_admin
 from app.api import sessions as sessions_api
 from app.core.config import get_settings
@@ -150,6 +151,7 @@ async def validation_handler(_: Request, exc: RequestValidationError) -> JSONRes
 app.include_router(auth_api.router)
 app.include_router(sessions_api.router)
 app.include_router(admin_api.router)
+app.include_router(research_api.router)
 
 
 def effective_demo_mode(engine: InferenceEngine | None) -> bool:
@@ -160,7 +162,7 @@ def effective_demo_mode(engine: InferenceEngine | None) -> bool:
 @app.get("/api/v1/config", include_in_schema=False)
 async def public_config() -> dict[str, bool]:
     """Non-secret settings the web app needs before sign-in."""
-    return {"demo_mode": effective_demo_mode(app.state.engine)}
+    return {"demo_mode": effective_demo_mode(app.state.engine), "research_mode": settings.research_mode}
 
 
 @app.get("/health/live", include_in_schema=False)
@@ -241,6 +243,14 @@ async def ws_stream(websocket: WebSocket) -> None:
     if not allowed:
         await websocket.close(code=CloseCode.FORBIDDEN, reason="patient_access_denied")
         return
+
+    if settings.research_mode:
+        async with db.pool.acquire() as conn:
+            consented = await research_api.has_current_consent(conn, patient_id)
+        if not consented:
+            # Enforced here, not just in the web app: no consent, no recording.
+            await websocket.close(code=CloseCode.CONSENT_REQUIRED, reason="research_consent_required")
+            return
 
     client_info = {
         "user_agent": (websocket.headers.get("user-agent") or "")[:256],

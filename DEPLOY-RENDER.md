@@ -111,6 +111,19 @@ Search engines learn which site "Flaria" means from links. Add a link to `https:
 
 Then put those profile addresses in `FLARIA_SAME_AS` on the static site and redeploy, so the structured data connects them.
 
+## Research mode settings
+
+Research mode is on in `render.yaml`. On the `flaria-app` service, open **Environment** and fill in:
+
+| Setting | Value |
+|---|---|
+| `FLARIA_STUDY_INVESTIGATOR` | Your name as lead investigator |
+| `FLARIA_STUDY_INSTITUTION` | Your university or organisation |
+| `FLARIA_STUDY_CONTACT_EMAIL` | The email participants should contact |
+| `FLARIA_STUDY_ETHICS_REFERENCE` | Leave empty until an ethics committee approves the study, then enter its approval number |
+
+Click **Save, rebuild and deploy**. Participants see these on the consent page, and every change asks them to consent again.
+
 ## Staying within the free plans
 
 - **Render:** a free web service sleeps when idle, so the first visit afterwards takes about a minute. The landing page is unaffected. Free instance hours (750 a month) cover one always-busy service.

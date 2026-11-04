@@ -71,6 +71,11 @@ export const ACTION_LABEL: Record<string, string> = {
   'admin.password_reset_sent': 'Sent a reset link',
   'admin.care_team_assign': 'Assigned a clinician',
   'admin.care_team_remove': 'Removed a clinician',
+  'research.consent_given': 'Joined the study',
+  'research.consent_withdrawn': 'Withdrew from the study',
+  'research.data_deleted': 'Deleted their research data',
+  'research.label_set': 'Recorded a research label',
+  'research.export': 'Downloaded a research export',
   'cli.create_admin': 'Created an admin (command line)',
   'cli.promote_admin': 'Promoted to admin (command line)',
 };

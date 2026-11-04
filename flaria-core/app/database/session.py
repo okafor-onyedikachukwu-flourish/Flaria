@@ -75,12 +75,13 @@ class Database:
     async def apply_schema(self, schema_path: Path) -> None:
         sql = schema_path.read_text(encoding="utf-8")
         async with self.pool.acquire() as conn:
-            # Serialise concurrent migrations across replicas.
-            await conn.execute("SELECT pg_advisory_lock(7212026)")
-            try:
+            # One transaction with a transaction-scoped lock: it serialises concurrent starts
+            # across replicas and is released at COMMIT/ROLLBACK, so it also works through
+            # transaction-mode poolers (Neon's -pooler endpoints, PgBouncer), where a
+            # session lock could land on one server connection and its unlock on another.
+            async with conn.transaction():
+                await conn.execute("SELECT pg_advisory_xact_lock(7212026)")
                 await conn.execute(sql)
-            finally:
-                await conn.execute("SELECT pg_advisory_unlock(7212026)")
         logger.info("schema applied")
 
     async def ping(self) -> bool:

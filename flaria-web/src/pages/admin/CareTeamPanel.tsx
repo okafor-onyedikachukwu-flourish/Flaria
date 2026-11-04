@@ -110,7 +110,7 @@ export function CareTeamPanel() {
       )}
 
       <LoadState loading={!links && !error} error={error} empty={grouped.length === 0} emptyText="No clinicians yet. Change a user’s role to Clinician first.">
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {grouped.map(([id, g]) => (
             <section key={id} className="panel bg-white" aria-labelledby={`clin-${id}`}>
               <div className="flex items-baseline justify-between gap-2 border-b border-rule px-4 py-3">

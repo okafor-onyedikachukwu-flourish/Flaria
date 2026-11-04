@@ -103,7 +103,7 @@ export function OverviewPanel({ onNavigate }: { onNavigate: (section: string) =>
               <Stat label="Locked accounts" value={data.users.locked} note={`${data.users.new_7d} new account${data.users.new_7d === 1 ? '' : 's'} this week`} tone={data.users.locked ? 'warn' : undefined} />
             </dl>
 
-            <div className="grid gap-6 xl:grid-cols-12">
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
               <section className="panel bg-white p-5 xl:col-span-8" aria-labelledby="results-chart-title">
                 <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
                   <h2 id="results-chart-title" className="text-step-1 font-semibold">Session results, last 14 days</h2>
@@ -146,7 +146,7 @@ export function OverviewPanel({ onNavigate }: { onNavigate: (section: string) =>
                   System details <ArrowRight size={14} aria-hidden />
                 </button>
               </div>
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div className="flex items-start gap-3">
                   <Cpu size={18} className="mt-0.5 text-scrub" aria-hidden />
                   <div>
