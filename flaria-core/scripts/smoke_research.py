@@ -85,6 +85,8 @@ async def main() -> None:
         await stream(ws_base, q_tok, 8)
 
         admin = (await c.post("/api/v1/auth/login", json={"email": args.admin_email, "password": args.admin_password})).json()["access_token"]
+        _, admin_ticks, _ = await stream(ws_base, admin, 6)
+        check(len(admin_ticks) > 0, "staff can run test sessions on their own account without joining the study")
         c_email, c_tok, c_id = await register("Dr Chi Clinician")
         r = await c.put(f"/api/v1/admin/users/{c_id}/role", headers=h(admin), json={"role": "CLINICIAN"})
         check(r.status_code == 204, "admin promotes the clinician")

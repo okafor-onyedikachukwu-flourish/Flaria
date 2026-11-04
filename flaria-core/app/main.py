@@ -245,8 +245,11 @@ async def ws_stream(websocket: WebSocket) -> None:
         return
 
     if settings.research_mode:
+        # Participants (PATIENT accounts) need a current consent. Staff testing on their own
+        # account are not study participants and are never exported, so they aren't gated.
         async with db.pool.acquire() as conn:
-            consented = await research_api.has_current_consent(conn, patient_id)
+            target_role = await conn.fetchval("SELECT role::text FROM users WHERE id = $1", patient_id)
+            consented = target_role != Role.PATIENT.value or await research_api.has_current_consent(conn, patient_id)
         if not consented:
             # Enforced here, not just in the web app: no consent, no recording.
             await websocket.close(code=CloseCode.CONSENT_REQUIRED, reason="research_consent_required")
